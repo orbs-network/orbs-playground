@@ -40,8 +40,8 @@ export class ContractManager {
   public async discoverContract({ contractName }) {
     const contractFilepath = `/tmp/${contractName}.go`;
 
-    const result = await exec(`go run gestapo.go -contract ${contractFilepath}`, {
-      cwd: path.join(path.dirname(__dirname), 'gestapo'),
+    const result = await exec(`go run introspector.go -contract ${contractFilepath}`, {
+      cwd: path.join(path.dirname(__dirname), '..', '..', 'go', 'introspector'),
     });
     return result.stderr;
   }
@@ -51,7 +51,7 @@ export class ContractManager {
 
     try {
       const client = this.orbsClientLoadBalancer.getClientForUser(userGuid);
-      const callResult = await queryContract(client, getUser('user1'), contractName, 'goebbelsReadProxiedState');
+      const callResult = await queryContract(client, getUser('user1'), contractName, 'decoratorReadProxiedState');
 
       returnValue = {
         ok: true,
@@ -72,7 +72,7 @@ export class ContractManager {
     let returnValue;
     try {
       const client = this.orbsClientLoadBalancer.getClientForUser(userGuid);
-      const callResult = await queryContract(client, getUser('user1'), contractName, 'goebbelsReadProxiedEvents');
+      const callResult = await queryContract(client, getUser('user1'), contractName, 'decoratorReadProxiedEvents');
 
       let events;
       const result = Buffer.from(callResult.outputArguments[0].value).toString();
@@ -110,8 +110,8 @@ export class ContractManager {
     console.log('writing the contract to file');
     await writeFile(contractFilepath, file.code);
 
-    await exec(`go run goebbels.go -contract ${contractFilepath} -output ${decoratedContractFilepath}`, {
-      cwd: path.join(path.dirname(__dirname), 'goebbels'),
+    await exec(`go run decorator.go -contract ${contractFilepath} -output ${decoratedContractFilepath}`, {
+      cwd: path.join(path.dirname(__dirname), '..', '..', 'go', 'decorator'),
     });
 
     const decoratedContractCode = await readFile(decoratedContractFilepath);
