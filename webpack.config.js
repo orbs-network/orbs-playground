@@ -9,6 +9,9 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const plugins = [new MonacoWebpackPlugin(), new ManifestPlugin()];
 
+const APP_DIR = path.resolve(__dirname, './src/client');
+const MONACO_DIR = path.resolve(__dirname, './node_modules/monaco-editor');
+
 //const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 //plugins.push(new BundleAnalyzerPlugin());
 
@@ -48,6 +51,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
+        include: APP_DIR,
         use: [
           {
             loader: 'style-loader',
@@ -68,6 +72,11 @@ module.exports = {
             },
           },
         ],
+      },
+      {
+        test: /\.css$/,
+        include: MONACO_DIR,
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /.jpe?g$|.gif$|.png$|.svg$|.woff$|.woff2$|.ttf$|.eot$/,
