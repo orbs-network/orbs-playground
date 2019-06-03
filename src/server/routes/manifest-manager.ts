@@ -4,7 +4,7 @@ import * as path from 'path';
 
 function getManifestFromWebpack(): Promise<any> {
   return new Promise((resolve, reject) => {
-    const request = require("request");
+    const request = require('request');
     request.get(`http://localhost:${WEBPACK_PORT}/statics/manifest.json`, {}, (err, data) => {
       if (err) {
         reject(err);

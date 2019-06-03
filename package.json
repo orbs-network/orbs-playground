@@ -1,5 +1,5 @@
 {
-  "name": "fullstack-typescript",
+  "name": "orbs-playground",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -33,7 +33,6 @@
   "keywords": [
     "typescript",
     "react",
-    "starter-kit",
     "webpack",
     "fullstack",
     "express",
@@ -42,7 +41,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/gilamran/fullstack-typescript.git"
+    "url": "https://github.com/orbs-network/orbs-playground.git"
   },
   "license": "MIT",
   "author": "Gil Amran",
@@ -76,17 +75,25 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
+    "@material-ui/icons": "^4.0.1",
     "axios": "^0.19.0",
     "body-parser": "^1.18.3",
+    "child-process-promise": "^2.2.1",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "tslib": "^1.9.3"
+    "monaco-editor": "^0.17.0",
+    "monaco-editor-webpack-plugin": "^1.7.0",
+    "orbs-client-sdk": "0.0.6",
+    "tmp-promise": "^2.0.1",
+    "tslib": "^1.9.3",
+    "webpack": "^4.25.1"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.2.3",
     "@babel/plugin-proposal-numeric-separator": "^7.2.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.4.4",
     "@babel/plugin-transform-runtime": "^7.2.0",
     "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
@@ -123,7 +130,6 @@
     "tslint": "^5.12.1",
     "typescript": "^3.2.2",
     "url-loader": "^1.1.2",
-    "webpack": "^4.32.2",
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.1.14",

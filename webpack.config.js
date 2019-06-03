@@ -5,8 +5,9 @@ const cssnano = require('cssnano');
 
 const config = require('./src/server/config');
 const nodeModulesPath = path.resolve(__dirname, 'node_modules');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
-const plugins = [new ManifestPlugin()];
+const plugins = [new MonacoWebpackPlugin(), new ManifestPlugin()];
 
 //const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 //plugins.push(new BundleAnalyzerPlugin());
@@ -41,7 +42,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.[jt]sx?$/,
         loaders: ['babel-loader'],
         exclude: [/node_modules/, nodeModulesPath],
       },

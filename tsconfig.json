@@ -4,13 +4,16 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "noEmit": true,
+    "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "outDir": "./dist",
-    "lib": ["es2015", "dom"],
+    "allowJs": true,
+    "lib": ["es2017", "dom"],
     "types": [],
     "jsx": "react"
   },
-  "files": ["./types.d.ts", "./src/client/client.tsx"]
+  "files": ["./types.d.ts", "./src/client/client.tsx"],
+  "exclude": ["node_modules"]
 }
