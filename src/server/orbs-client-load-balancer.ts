@@ -1,17 +1,6 @@
 import { Client, NetworkType } from 'orbs-client-sdk';
 import { WebClient } from '@slack/web-api';
-import { SLACK_TOKEN } from './config';
-
-const ORBS_END_POINTS = [
-  {
-    URL: 'http://localhost:8080',
-    VCHAIN_ID: 42,
-  },
-  {
-    URL: 'http://localhost:8080',
-    VCHAIN_ID: 42,
-  },
-];
+import { SLACK_TOKEN, ORBS_END_POINTS } from './config';
 
 const MAX_CONCURRENT_CLIENTS = ORBS_END_POINTS.length;
 
@@ -56,6 +45,7 @@ export class OrbsClientLoadBalancer {
   private allocateNextClient() {
     this.calcNextAvailableClientIdx();
     // TODO: restart the orbs node
+    console.log(ORBS_END_POINTS[this.availableClientIdx]);
     const client = new Client(
       ORBS_END_POINTS[this.availableClientIdx].URL,
       ORBS_END_POINTS[this.availableClientIdx].VCHAIN_ID,
@@ -65,8 +55,10 @@ export class OrbsClientLoadBalancer {
   }
 
   private async sendSlackMessage(message: string) {
-    const web = new WebClient(SLACK_TOKEN);
-    const res = await web.chat.postMessage({ channel: '#online-ide', text: message });
-    console.log('Message sent: ', res.ts);
+    if (SLACK_TOKEN) {
+      const web = new WebClient(SLACK_TOKEN);
+      const res = await web.chat.postMessage({ channel: '#online-ide', text: message });
+      console.log('Message sent: ', res.ts);
+    }
   }
 }
