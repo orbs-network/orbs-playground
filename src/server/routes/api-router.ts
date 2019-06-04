@@ -58,98 +58,119 @@ export function apiRouter() {
   });
 
   router.get('/api/state', async (req, res) => {
-    const userGuid = getUserGuidFromReq(req);
-    const contractName = req.query.contractName;
-    const returnJson = await contracts.getContractState(userGuid, {
-      contractName,
-    });
+    try {
+      const userGuid = getUserGuidFromReq(req);
+      const contractName = req.query.contractName;
+      const returnJson = await contracts.getContractState(userGuid, {
+        contractName,
+      });
 
-    res.json(returnJson);
-    res.end();
+      res.json(returnJson);
+    } catch (err) {
+      res.end();
+    }
   });
 
   router.get('/api/events', async (req, res) => {
-    const userGuid = getUserGuidFromReq(req);
-    const contractName = req.query.contractName;
-    const returnJson = await contracts.getContractEvents(userGuid, {
-      contractName,
-    });
+    try {
+      const userGuid = getUserGuidFromReq(req);
+      const contractName = req.query.contractName;
+      const returnJson = await contracts.getContractEvents(userGuid, {
+        contractName,
+      });
 
-    res.json(returnJson);
-    res.end();
+      res.json(returnJson);
+    } catch (err) {
+      res.end();
+    }
   });
 
   router.get('/api/discover/contract', async (req, res) => {
-    const contractName = req.query.contractName;
-    const gammaResponse = await contracts.discoverContract({ contractName });
+    try {
+      const contractName = req.query.contractName;
+      const gammaResponse = await contracts.discoverContract({ contractName });
 
-    res.json({
-      ok: true,
-      data: JSON.parse(gammaResponse),
-    });
-    res.end();
+      res.json({
+        ok: true,
+        data: JSON.parse(gammaResponse),
+      });
+    } catch (err) {
+      res.end();
+    }
   });
 
   router.post('/api/deploy', async (req, res) => {
-    const userGuid = getUserGuidFromReq(req);
-    const file = files.load('THE_ONE_AND_ONLY_FILE');
-    file.code = req.body.data;
-    files.save(file);
+    try {
+      const userGuid = getUserGuidFromReq(req);
+      const file = files.load('THE_ONE_AND_ONLY_FILE');
+      file.code = req.body.data;
+      files.save(file);
 
-    const { ok, deploymentError, contractName, methods, stateJson, eventsJson } = await contracts.decorateAndDeploy(
-      userGuid,
-      file,
-    );
+      const { ok, deploymentError, contractName, methods, stateJson, eventsJson } = await contracts.decorateAndDeploy(
+        userGuid,
+        file,
+      );
 
-    res.json({
-      ok,
-      deploymentError,
-      eventsJson,
-      contractName,
-      methods,
-      stateJson,
-    });
-    res.end();
+      res.json({
+        ok,
+        deploymentError,
+        eventsJson,
+        contractName,
+        methods,
+        stateJson,
+      });
+    } catch (err) {
+      res.end();
+    }
   });
 
   router.post('/api/deploy/:name', async (req, res) => {
-    const userGuid = getUserGuidFromReq(req);
-    const file = files.new(req.params.name, req.body.data);
-    const { contractName, methods, stateJson, deploymentError, eventsJson } = await contracts.decorateAndDeploy(
-      userGuid,
-      file,
-    );
+    try {
+      const userGuid = getUserGuidFromReq(req);
+      const file = files.new(req.params.name, req.body.data);
+      const { contractName, methods, stateJson, deploymentError, eventsJson } = await contracts.decorateAndDeploy(
+        userGuid,
+        file,
+      );
 
-    res.json({
-      ok: true,
-      deploymentError,
-      eventsJson,
-      contractName,
-      methods,
-      stateJson,
-    });
-    res.end();
+      res.json({
+        ok: true,
+        deploymentError,
+        eventsJson,
+        contractName,
+        methods,
+        stateJson,
+      });
+    } catch (err) {
+      res.end();
+    }
   });
 
   router.post('/api/test/:name', async (req, res) => {
-    const { stdout, stderr, success } = await contracts.runTest(req.params.name);
+    try {
+      const { stdout, stderr, success } = await contracts.runTest(req.params.name);
 
-    res.json({
-      ok: true,
-      allTestsPassed: success,
-      output: stdout,
-      stderr,
-    });
-    res.end();
+      res.json({
+        ok: true,
+        allTestsPassed: success,
+        output: stdout,
+        stderr,
+      });
+    } catch (err) {
+      res.end();
+    }
   });
 
   router.get('/api/users', async (req, res) => {
-    const users = getBasicUsersList();
-    res.json({
-      ok: true,
-      users,
-    });
-    res.end();
+    try {
+      const users = getBasicUsersList();
+      res.json({
+        ok: true,
+        users,
+      });
+    } catch (err) {
+      res.end();
+    }
   });
 
   router.post('/api/set-user', (req, res) => {
