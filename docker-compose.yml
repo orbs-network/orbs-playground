@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  gamma-1:
+    image: orbs:gamma-server
+    restart: always
+
+  gamma-2:
+    image: orbs:gamma-server
+    restart: always
+
+  gamma-3:
+    image: orbs:gamma-server
+    restart: always
+
+  playground:
+    image: orbs:playground
+    ports:
+      - 3000:3000
+    environment: 
+      NODE_ENV: production
+      ORBS_END_POINTS: '[{"URL": "http://gamma-1:8080", "VCHAIN_ID":42}, {"URL": "http://gamma-2:8080", "VCHAIN_ID":42}, { "URL": "http://gamma-3:8080", "VCHAIN_ID":42}]'

@@ -29,7 +29,7 @@ export class OrbsClientsManager {
 
   public restartServerByIdx(idx: number) {
     return new Promise((resolve, reject) => {
-      request.get(`${this.clientsDataList[idx].endPointData.URL}/debug/gamma/restart`, {}, (err, data) =>
+      request.get(`${this.clientsDataList[idx].endPointData.URL}/debug/gamma/shutdown`, {}, (err, data) =>
         err ? reject(err) : resolve(data.body),
       );
     });
