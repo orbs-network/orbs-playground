@@ -9,7 +9,6 @@ const files = new FileManager();
 const contracts = new ContractManager(files);
 
 function getUserGuidFromReq(req) {
-  console.log('req.session.userGuid:', req.session.userGuid);
   if (!req.session.userGuid) {
     req.session.userGuid = uuid();
   }
