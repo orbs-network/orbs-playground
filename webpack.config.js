@@ -4,6 +4,7 @@ const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const cssnano = require('cssnano');
 
 const config = require('./src/server/config');
+const { SERVER_PORT, IS_DEV, WEBPACK_PORT } = config;
 const nodeModulesPath = path.resolve(__dirname, 'node_modules');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
@@ -15,13 +16,13 @@ const MONACO_DIR = path.resolve(__dirname, './node_modules/monaco-editor');
 //const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 //plugins.push(new BundleAnalyzerPlugin());
 
-if (!config.IS_PRODUCTION) {
-  plugins.push(new OpenBrowserPlugin({ url: `http://localhost:${config.SERVER_PORT}` }));
+if (IS_DEV) {
+  plugins.push(new OpenBrowserPlugin({ url: `http://localhost:${SERVER_PORT}` }));
 }
 
 module.exports = {
-  mode: config.IS_PRODUCTION ? 'production' : 'development',
-  devtool: config.IS_PRODUCTION ? '' : 'inline-source-map',
+  mode: IS_DEV ? 'development' : 'production',
+  devtool: IS_DEV ? 'inline-source-map' : '',
   entry: ['@babel/polyfill', './src/client/client'],
   output: {
     path: path.join(__dirname, 'dist', 'statics'),
@@ -61,14 +62,14 @@ module.exports = {
             options: {
               modules: true,
               camelCase: true,
-              sourceMap: !config.IS_PRODUCTION,
+              sourceMap: IS_DEV,
             },
           },
           {
             loader: 'postcss-loader',
             options: {
-              sourceMap: !config.IS_PRODUCTION,
-              plugins: config.IS_PRODUCTION ? [] : [cssnano()],
+              sourceMap: IS_DEV,
+              plugins: IS_DEV ? [cssnano()] : [],
             },
           },
         ],
@@ -85,7 +86,7 @@ module.exports = {
     ],
   },
   devServer: {
-    port: config.WEBPACK_PORT,
+    port: WEBPACK_PORT,
   },
   plugins,
   externals: {

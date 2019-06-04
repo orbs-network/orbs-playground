@@ -1,13 +1,15 @@
 import { Client, NetworkType } from 'orbs-client-sdk';
+import { WebClient } from '@slack/web-api';
+import { SLACK_TOKEN } from './config';
 
 const ORBS_END_POINTS = [
   {
     URL: 'http://localhost:8080',
-    VCHAIN_ID: 42
+    VCHAIN_ID: 42,
   },
   {
     URL: 'http://localhost:8080',
-    VCHAIN_ID: 42
+    VCHAIN_ID: 42,
   },
 ];
 
@@ -34,11 +36,11 @@ export class OrbsClientLoadBalancer {
     return clientData.client;
   }
 
-  public getClientDataByUserGuid(userGuid) {
+  private getClientDataByUserGuid(userGuid) {
     return this.clientsList.find(c => c.userGuid === userGuid);
   }
 
-  public calcNextAvailableClientIdx() {
+  private calcNextAvailableClientIdx() {
     if (this.availableClientIdx === undefined) {
       this.availableClientIdx = 0;
       return;
@@ -47,18 +49,24 @@ export class OrbsClientLoadBalancer {
     this.availableClientIdx++;
     if (this.availableClientIdx >= MAX_CONCURRENT_CLIENTS) {
       this.availableClientIdx = 0;
-      // TODO: notify a cicle was made
+      this.sendSlackMessage('Orbs-Playground made a full cycle');
     }
   }
 
-  public allocateNextClient() {
+  private allocateNextClient() {
     this.calcNextAvailableClientIdx();
     // TODO: restart the orbs node
     const client = new Client(
       ORBS_END_POINTS[this.availableClientIdx].URL,
       ORBS_END_POINTS[this.availableClientIdx].VCHAIN_ID,
-      'MAIN_NET' as NetworkType
+      'MAIN_NET' as NetworkType,
     );
     this.clientsList[this.availableClientIdx] = { client, userGuid: null };
+  }
+
+  private async sendSlackMessage(message: string) {
+    const web = new WebClient(SLACK_TOKEN);
+    const res = await web.chat.postMessage({ channel: '#online-ide', text: message });
+    console.log('Message sent: ', res.ts);
   }
 }
