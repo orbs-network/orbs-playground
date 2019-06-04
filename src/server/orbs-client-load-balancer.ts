@@ -1,57 +1,69 @@
-import { Client, NetworkType } from 'orbs-client-sdk';
 import { WebClient } from '@slack/web-api';
-import { SLACK_TOKEN, ORBS_END_POINTS } from './config';
-
-const MAX_CONCURRENT_CLIENTS = ORBS_END_POINTS.length;
+import { Client } from 'orbs-client-sdk';
+import { SLACK_TOKEN } from './config';
+import { OrbsClientsManager } from './orbs-clients-manager';
 
 export class OrbsClientLoadBalancer {
-  private clientsList;
-  private availableClientIdx: number;
+  private orbsClientsManager: OrbsClientsManager;
+  private availableClientSlot: number;
+  private userGuidToClientIdx: Map<string, number>;
+  private clientIdxToUserGuid: Map<number, string>;
+
   constructor() {
-    this.clientsList = [];
-    this.availableClientIdx = undefined;
-    this.allocateNextClient();
+    this.orbsClientsManager = new OrbsClientsManager();
+    this.availableClientSlot = undefined;
+    this.userGuidToClientIdx = new Map();
+    this.clientIdxToUserGuid = new Map();
   }
 
-  public getClientForUser(userGuid) {
-    const userClientData = this.getClientDataByUserGuid(userGuid);
-    if (userClientData) {
-      return userClientData.client;
+  public getClientForUser(userGuid: string): Client {
+    // user already has a client assigned?
+    const userClient = this.getClientByUserGuid(userGuid);
+    if (userClient) {
+      return userClient;
     }
 
-    const clientData = this.clientsList[this.availableClientIdx];
-    clientData.userGuid = userGuid;
-    this.allocateNextClient();
-    return clientData.client;
+    this.calcNextAvailableClientIdx();
+    // was this client idx already assigned to a user?
+    if (this.clientIdxToUserGuid.has(this.availableClientSlot)) {
+      // restart the server before we assign it
+      this.orbsClientsManager.restartServerByIdx(this.availableClientSlot);
+    }
+
+    this.clientIdxToUserGuid.set(this.availableClientSlot, userGuid);
+    this.userGuidToClientIdx.set(userGuid, this.availableClientSlot);
+    return this.orbsClientsManager.getClientByIdx(this.availableClientSlot);
   }
 
-  private getClientDataByUserGuid(userGuid) {
-    return this.clientsList.find(c => c.userGuid === userGuid);
+  public async restartServerByUser(userGuid: string): Promise<boolean> {
+    const clientIdx = this.userGuidToClientIdx.get(userGuid);
+    if (clientIdx !== undefined) {
+      await this.orbsClientsManager.restartServerByIdx(clientIdx);
+      return true;
+    }
+
+    return false;
+  }
+
+  private getClientByUserGuid(userGuid: string): Client {
+    const clientIdx = this.userGuidToClientIdx.get(userGuid);
+    if (clientIdx !== undefined) {
+      return this.orbsClientsManager.getClientByIdx(clientIdx);
+    }
+    return null;
   }
 
   private calcNextAvailableClientIdx() {
-    if (this.availableClientIdx === undefined) {
-      this.availableClientIdx = 0;
+    if (this.availableClientSlot === undefined) {
+      this.availableClientSlot = 0;
       return;
     }
 
-    this.availableClientIdx++;
-    if (this.availableClientIdx >= MAX_CONCURRENT_CLIENTS) {
-      this.availableClientIdx = 0;
+    this.availableClientSlot++;
+    if (this.availableClientSlot >= this.orbsClientsManager.getTotalClients()) {
+      this.availableClientSlot = 0;
       this.sendSlackMessage('Orbs-Playground made a full cycle');
     }
-  }
-
-  private allocateNextClient() {
-    this.calcNextAvailableClientIdx();
-    // TODO: restart the orbs node
-    console.log(ORBS_END_POINTS[this.availableClientIdx]);
-    const client = new Client(
-      ORBS_END_POINTS[this.availableClientIdx].URL,
-      ORBS_END_POINTS[this.availableClientIdx].VCHAIN_ID,
-      'MAIN_NET' as NetworkType,
-    );
-    this.clientsList[this.availableClientIdx] = { client, userGuid: null };
   }
 
   private async sendSlackMessage(message: string) {

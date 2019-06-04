@@ -151,6 +151,10 @@ export class ContractManager {
 
     return { stateJson, result, eventsJson };
   }
+
+  public async restartGammaServer(userGuid: string) {
+    await this.orbsClientLoadBalancer.restartServerByUser(userGuid);
+  }
 }
 
 function toOrbsArgs(arg) {

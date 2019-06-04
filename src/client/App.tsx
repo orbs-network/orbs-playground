@@ -169,6 +169,10 @@ class AppImpl extends React.Component<any, any> {
     this.saveFiles();
   }
 
+  async restartHandler() {
+    await axios.post(`/api/restart`);
+  }
+
   async testHandler(code) {
     await this.saveHandler(code);
     const { data } = await axios.post(`/api/test/${this.state.currentFile.name}`);
@@ -348,6 +352,7 @@ class AppImpl extends React.Component<any, any> {
                 <hr />
                 <Editor
                   onSave={this.saveHandler.bind(this)}
+                  onRestart={this.restartHandler.bind(this)}
                   onTest={this.testHandler.bind(this)}
                   file={this.state.currentFile}
                   lastDeploymentExecutionResult={lastDeploymentExecutionResult}

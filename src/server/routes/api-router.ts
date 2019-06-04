@@ -27,6 +27,18 @@ export function apiRouter() {
     }),
   );
 
+  router.post('/api/restart', async (req, res) => {
+    try {
+      const userGuid = getUserGuidFromReq(req);
+      await contracts.restartGammaServer(userGuid);
+      res.json({ ok: true });
+    } catch (err) {
+      res.json({ ok: false });
+    }
+
+    res.end();
+  });
+
   router.post('/api/execute', async (req, res) => {
     try {
       const userGuid = getUserGuidFromReq(req);

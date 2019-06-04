@@ -98,6 +98,11 @@ export default theme => ({
     top: 16,
     right: 105
   },
+  restartButton: {
+    position: 'absolute',
+    top: 16,
+    right: 185
+  },
   chartContainer: {
     marginLeft: -22
   },

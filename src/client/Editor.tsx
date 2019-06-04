@@ -20,6 +20,10 @@ export class Editor extends React.Component<any, any> {
     this.props.onSave(this.editorInstance.getValue());
   }
 
+  restartHandler() {
+    this.props.onRestart();
+  }
+
   testHandler() {
     this.props.onTest(this.editorInstance.getValue());
   }
@@ -42,9 +46,17 @@ export class Editor extends React.Component<any, any> {
       <React.Fragment>
         {ctaDisabled && <LinearProgress />}
         <Button
-          className={buttonClasses.saveButton}
+          className={buttonClasses.restartButton}
           variant='contained'
           color='secondary'
+          onClick={this.restartHandler.bind(this)}
+        >
+          Restart
+        </Button>
+        <Button
+          className={buttonClasses.saveButton}
+          variant='contained'
+          color='primary'
           onClick={this.saveHandler.bind(this)}
         >
           Save
