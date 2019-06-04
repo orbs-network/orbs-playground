@@ -1,4 +1,4 @@
-FROM golang:1.11.4-alpine
+FROM golang:1.11-alpine
 
 RUN apk add --no-cache nodejs npm git
 
