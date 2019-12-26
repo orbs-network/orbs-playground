@@ -102,7 +102,7 @@ export class ContractManager {
   public async decorateAndDeploy(userGuid, file) {
     const client = this.orbsClientLoadBalancer.getClientForUser(userGuid);
     const assignedUid = uuid();
-    const contractName = `contract_${assignedUid}`;
+    const contractName = `contract${assignedUid.replace(/_|-/g, '')}`;
     const contractFilepath = `/tmp/${contractName}.go`;
     const decoratedContractFilepath = `/tmp/${contractName}_decorated.go`;
 

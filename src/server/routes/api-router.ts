@@ -137,13 +137,16 @@ export function apiRouter() {
   });
 
   router.post('/api/deploy/:name', async (req, res) => {
-    try {
+    try {      
       const userGuid = getUserGuidFromReq(req);
       const file = files.new(req.params.name, req.body.data);
+
       const { contractName, methods, stateJson, deploymentError, eventsJson } = await contracts.decorateAndDeploy(
         userGuid,
         file,
       );
+
+      console.log('contract to deploy: ', contractName);
 
       res.json({
         ok: true,
@@ -154,6 +157,7 @@ export function apiRouter() {
         stateJson,
       });
     } catch (err) {
+      console.log(err);
       res.end();
     }
   });

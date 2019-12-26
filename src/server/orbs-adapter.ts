@@ -51,7 +51,10 @@ export async function deployContract(client, user, contractName, contractCode) {
     args
   );
 
-  const txResult = await client.sendTransaction(tx);
+  const txResult = await client.sendTransaction(tx).catch(err => {
+    console.log('in here', err);
+  });
+
   console.log('txResult', txResult);
   return txResult;
 }
